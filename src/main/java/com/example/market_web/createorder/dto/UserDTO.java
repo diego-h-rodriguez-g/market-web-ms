@@ -1,6 +1,5 @@
-package com.example.market_web.commons.entity;
+package com.example.market_web.createorder.dto;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,11 +11,7 @@ import java.math.BigInteger;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "users")
-public class UserEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class UserDTO {
     private Integer id;
     private String name;
     private String email;
