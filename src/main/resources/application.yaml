@@ -1,3 +1,8 @@
+server:
+  port: 80
+  servlet:
+    context-path: /market_web
+
 spring:
   application:
     name: market-web-ms
@@ -9,3 +14,13 @@ spring:
       hibernate:
         format_sql: true
 
+app:
+  market-web:
+    database:
+      host: ${DATABASE_HOST:localhost}
+      port: ${DATABASE_PORT:5432}
+      name: ${DATABASE_NAME:market_web}
+      schema: ${DATABASE_SCHEMA:market_web}
+      username: ${DATABASE_USERNAME:postgres}
+      password: ${DATABASE_PASSWORD:admin}
+      driver: ${DATABASE_DRIVER:oracle.jdbc.OracleDriver}
