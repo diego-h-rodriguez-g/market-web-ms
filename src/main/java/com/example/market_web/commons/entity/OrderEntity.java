@@ -1,15 +1,18 @@
 package com.example.market_web.commons.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "orders")
 public class OrderEntity {
@@ -24,6 +27,10 @@ public class OrderEntity {
     private UserEntity user;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    @ToString.Exclude
     private List<OrderDetailEntity> orderDetails;
+
+    public void addOrderDetail(OrderDetailEntity orderDetailEntity) {
+        this.orderDetails.add(orderDetailEntity);
+        orderDetailEntity.setOrder(this);
+    }
 }
