@@ -1,6 +1,6 @@
 package com.example.market_web.getbooks.controller;
 
-import com.example.market_web.commons.entity.BookEntity;
+import com.example.market_web.getbooks.dto.BookDTO;
 import com.example.market_web.getbooks.service.BookService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
@@ -21,7 +21,7 @@ public class GetBooksController {
     }
 
     @GetMapping(path = "/books/search", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<BookEntity>> getAvailableBooks(
+    public ResponseEntity<Page<BookDTO>> getAvailableBooks(
             @RequestParam Integer page,
             @RequestParam Integer pageSize,
             @RequestParam Integer stock,
