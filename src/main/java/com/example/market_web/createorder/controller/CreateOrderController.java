@@ -18,7 +18,7 @@ public class CreateOrderController {
         this.orderService = orderService;
     }
 
-    @PostMapping(path = "/order", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/orders/order", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CreateOrderResponseDTO> createOrder(
             @RequestBody @Valid CreateOrderRequestDTO createOrderRequestDTO) {
         return ResponseEntity.ok(orderService.createOrder(createOrderRequestDTO));
