@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
 import java.util.logging.Level;
 
 @Component
@@ -33,5 +34,11 @@ public class UtilitiesImpl implements Utilities {
             return Sort.by(field).ascending();
         }
         return Sort.by(field).descending();
+    }
+
+    @Override
+    public Boolean objectIsNull(Object object) {
+        return Objects.isNull(object);
+
     }
 }

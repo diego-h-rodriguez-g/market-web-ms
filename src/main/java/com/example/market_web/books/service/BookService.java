@@ -1,6 +1,8 @@
 package com.example.market_web.books.service;
 
+import com.example.market_web.books.dto.request.PatchBookRequestDTO;
 import com.example.market_web.books.dto.response.GetAvailableBookResponseDTO;
+import com.example.market_web.books.dto.response.PatchBookResponseDTO;
 import com.example.market_web.books.entity.BookEntity;
 import org.springframework.data.domain.Page;
 
@@ -9,4 +11,5 @@ public interface BookService {
 
     BookEntity discountStockById(Integer bookId, Integer quantity);
 
+    PatchBookResponseDTO patchBook(Integer bookId, PatchBookRequestDTO patchBookRequestDTO);
 }

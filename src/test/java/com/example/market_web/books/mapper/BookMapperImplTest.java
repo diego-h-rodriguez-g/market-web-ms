@@ -1,5 +1,6 @@
 package com.example.market_web.books.mapper;
 
+import com.example.market_web.books.dto.response.PatchBookResponseDTO;
 import com.example.market_web.books.entity.BookEntity;
 import com.example.market_web.books.dto.response.GetAvailableBookResponseDTO;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,17 +36,33 @@ public class BookMapperImplTest {
     public void returnPageBookDTOInEntityToDto() {
         Integer id = 1941;
         String title = "title";
-        BookEntity bookEntity = new BookEntity();
-        bookEntity.setId(id);
-        bookEntity.setTitle(title);
+        BookEntity bookEntity = BookEntity.builder()
+                .id(id)
+                .title(title)
+                .build();
         Page<BookEntity> entityPage = new PageImpl<>(List.of(bookEntity));
-        GetAvailableBookResponseDTO expectedResponse = new GetAvailableBookResponseDTO();
-        expectedResponse.setId(1941);
-        expectedResponse.setTitle(title);
+        GetAvailableBookResponseDTO expectedResponse = GetAvailableBookResponseDTO.builder()
+                .id(id)
+                .title(title)
+                .build();
 
         when(modelMapper.map(bookEntity, GetAvailableBookResponseDTO.class)).thenReturn(expectedResponse);
 
-        Page<GetAvailableBookResponseDTO> receivedResponse = bookMapper.entityToDto(entityPage);
-        assertEquals(expectedResponse, receivedResponse.getContent().getFirst());
+        assertEquals(expectedResponse, bookMapper.entityToDto(entityPage).getContent().getFirst());
+    }
+    @Test
+    @DisplayName("Should return a PatchBookResponseDTO in method entityToDto")
+    public void returnPatchBookResponseDTOInEntityToDto() {
+        Integer id = 1941;
+        String title = "title";
+        BookEntity bookEntity = BookEntity.builder()
+                .id(id)
+                .title(title)
+                .build();
+
+        PatchBookResponseDTO expectedResponse = PatchBookResponseDTO.builder().id(1941).title(title).build();
+
+        when(modelMapper.map(bookEntity, PatchBookResponseDTO.class)).thenReturn(expectedResponse);
+        assertEquals(expectedResponse, bookMapper.entityToDto(bookEntity));
     }
 }
