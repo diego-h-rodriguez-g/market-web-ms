@@ -22,7 +22,7 @@ public class UtilitiesImpl implements Utilities {
         try {
             return objectMapper.writeValueAsString(object);
         } catch (Exception exception) {
-            log.log(Level.INFO, "an uncaught exception has occurred: {0}", exception);
+            log.log(Level.INFO, "An uncaught exception has occurred: {0}", new Object[]{exception});
         }
         return null;
     }
