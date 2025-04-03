@@ -1,5 +1,6 @@
 package com.example.market_web.commons.entity;
 
+import com.example.market_web.books.entity.BookEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;

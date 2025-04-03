@@ -1,8 +1,7 @@
-package com.example.market_web.commons.entity;
+package com.example.market_web.books.dto;
 
 import com.example.market_web.books.entity.BookEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
@@ -11,16 +10,16 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "categories")
-public class CategoryEntity {
+public class AuthorDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String name;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private String firstName;
+
+    private String lastName;
+
+    private String nationality;
+
     @ToString.Exclude
     @JsonIgnore
     private List<BookEntity> books;
