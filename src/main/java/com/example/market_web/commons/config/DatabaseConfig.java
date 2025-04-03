@@ -32,7 +32,7 @@ public class DatabaseConfig {
     private String driver;
 
     @Bean
-    public DataSource rapidTicketDataSource() {
+    public DataSource marketWebDataSource() {
         String jdbcUrl = PREFIX_JDBC_URL + host + ":" + port + "/" + name +"?currentSchema=" + schema;
         log.log(Level.INFO, "Database connection for: {0}", new Object[]{jdbcUrl});
         HikariConfig config = new HikariConfig();
