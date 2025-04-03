@@ -1,5 +1,7 @@
 package com.example.market_web.books.service;
 
+import com.example.market_web.books.dto.request.PatchBookRequestDTO;
+import com.example.market_web.books.dto.response.PatchBookResponseDTO;
 import com.example.market_web.books.entity.BookEntity;
 import com.example.market_web.commons.utilities.Utilities;
 import com.example.market_web.books.dto.response.GetAvailableBookResponseDTO;
@@ -15,10 +17,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class BookServiceImplTest {
@@ -41,7 +45,9 @@ public class BookServiceImplTest {
     private Page<BookEntity> entityPage;
 
     @Mock
-    private Page<GetAvailableBookResponseDTO> expectedResponse;
+    private Page<GetAvailableBookResponseDTO> pageExpectedResponse;
+
+    private static final String TITLE = "title";
 
     @BeforeEach
     public void setup() {
@@ -60,9 +66,9 @@ public class BookServiceImplTest {
 
         when(utilities.buildSort(field, isAsc)).thenReturn(sort);
         when(bookRepository.findByStockGreaterThanEqual(stock, pageRequest)).thenReturn(entityPage);
-        when(bookMapper.entityToDto(entityPage)).thenReturn(expectedResponse);
+        when(bookMapper.entityToDto(entityPage)).thenReturn(pageExpectedResponse);
 
-        assertEquals(expectedResponse, bookService.getAvailableBooks(page, pageSize, stock, field, isAsc));
+        assertEquals(pageExpectedResponse, bookService.getAvailableBooks(page, pageSize, stock, field, isAsc));
     }
 
     @Test
@@ -72,16 +78,15 @@ public class BookServiceImplTest {
         Integer quantity = 2;
         Integer initialStock = 5;
         Integer finalStock = initialStock - quantity;
-        String title = "title";
 
         BookEntity bookEntity = new BookEntity();
         bookEntity.setId(bookId);
-        bookEntity.setTitle(title);
+        bookEntity.setTitle(TITLE);
         bookEntity.setStock(initialStock);
 
         BookEntity expectedResponse = new BookEntity();
         expectedResponse.setId(bookId);
-        expectedResponse.setTitle(title);
+        expectedResponse.setTitle(TITLE);
         expectedResponse.setStock(finalStock);
 
         when(bookRepository.findById(bookId)).thenReturn(Optional.of(bookEntity));
@@ -109,16 +114,109 @@ public class BookServiceImplTest {
         Integer bookId = 999;
         Integer quantity = 5;
         Integer initialStock = 1;
-        String title = "title";
 
         BookEntity bookEntity = new BookEntity();
         bookEntity.setId(bookId);
-        bookEntity.setTitle(title);
+        bookEntity.setTitle(TITLE);
         bookEntity.setStock(initialStock);
 
         when(bookRepository.findById(bookId)).thenReturn(Optional.of(bookEntity));
 
         assertThrows(RuntimeException.class, () -> bookService.discountStockById(bookId, quantity));
+    }
+
+    @Test
+    @DisplayName("Should return a PatchBookResponseDTO in method patchBook When newPrice Null")
+    void returnPatchBookResponseDTOInPatchBookWhenNewPriceNull() {
+        Integer bookId = 1;
+        Integer additionalStock = 10;
+        BigDecimal newPrice = BigDecimal.valueOf(19.41);
+        Integer actualStock = 9;
+        PatchBookRequestDTO requestDTO = PatchBookRequestDTO.builder()
+                .additionalStock(additionalStock)
+                .newPrice(newPrice)
+                .build();
+
+        BookEntity bookEntity = BookEntity.builder()
+                .id(bookId)
+                .title(TITLE)
+                .price(newPrice)
+                .stock(actualStock)
+                .build();
+
+        BookEntity updatedBook = new BookEntity();
+        updatedBook.setId(bookId);
+        updatedBook.setPrice(newPrice);
+        updatedBook.setStock(10);
+
+        PatchBookResponseDTO expectedResponse = PatchBookResponseDTO.builder()
+                .id(bookId)
+                .title(TITLE)
+                .stock(additionalStock+actualStock)
+                .price(newPrice)
+                .build();
+
+        when(bookRepository.findById(bookId)).thenReturn(Optional.of(bookEntity));
+        when(utilities.objectIsNull(any())).thenReturn(false, true);
+        when(bookRepository.save(bookEntity)).thenReturn(updatedBook);
+        when(bookMapper.entityToDto(updatedBook)).thenReturn(expectedResponse);
+
+        assertEquals(expectedResponse, bookService.patchBook(bookId, requestDTO));
+    }
+
+    @Test
+    @DisplayName("Should return a PatchBookResponseDTO in method patchBook When additionalStock null ")
+    void returnPatchBookResponseDTOInPatchBookWhenAdditionalStockNull() {
+        Integer bookId = 1;
+        Integer additionalStock = 10;
+        BigDecimal price = BigDecimal.valueOf(19.41);
+        Integer actualStock = 9;
+        PatchBookRequestDTO requestDTO = PatchBookRequestDTO.builder()
+                .additionalStock(additionalStock)
+                .newPrice(price)
+                .build();
+
+        BookEntity bookEntity = BookEntity.builder()
+                .id(bookId)
+                .title(TITLE)
+                .price(price)
+                .stock(actualStock)
+                .build();
+
+        BookEntity updatedBook = new BookEntity();
+        updatedBook.setId(bookId);
+        updatedBook.setPrice(price);
+        updatedBook.setStock(10);
+
+        PatchBookResponseDTO expectedResponse = PatchBookResponseDTO.builder()
+                .id(bookId)
+                .title(TITLE)
+                .stock(additionalStock+actualStock)
+                .price(price)
+                .build();
+
+        when(bookRepository.findById(bookId)).thenReturn(Optional.of(bookEntity));
+        when(utilities.objectIsNull(any())).thenReturn(true, false);
+        when(bookRepository.save(bookEntity)).thenReturn(updatedBook);
+        when(bookMapper.entityToDto(updatedBook)).thenReturn(expectedResponse);
+
+        assertEquals(expectedResponse, bookService.patchBook(bookId, requestDTO));
+    }
+
+    @Test
+    @DisplayName("Should throw an Exception in method patchBook when bookId not found")
+    void throwExceptionInMethodPatchBookWhenBookIdNotFound() {
+        Integer bookId = 999;
+        Integer additionalStock = 10;
+        BigDecimal price = BigDecimal.valueOf(19.41);
+        PatchBookRequestDTO requestDTO = PatchBookRequestDTO.builder()
+                .additionalStock(additionalStock)
+                .newPrice(price)
+                .build();
+
+        when(bookRepository.findById(bookId)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> bookService.patchBook(bookId, requestDTO));
     }
 }
 

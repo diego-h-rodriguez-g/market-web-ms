@@ -1,5 +1,6 @@
 package com.example.market_web.books.mapper;
 
+import com.example.market_web.books.dto.response.PatchBookResponseDTO;
 import com.example.market_web.books.entity.BookEntity;
 import com.example.market_web.books.dto.response.GetAvailableBookResponseDTO;
 import org.modelmapper.ModelMapper;
@@ -16,5 +17,10 @@ public class BookMapperImpl implements BookMapper{
 
     public Page<GetAvailableBookResponseDTO> entityToDto(Page<BookEntity> bookEntities){
         return bookEntities.map(objectEntity -> modelMapper.map(objectEntity, GetAvailableBookResponseDTO.class));
+    }
+
+    @Override
+    public PatchBookResponseDTO entityToDto(BookEntity bookEntity) {
+        return  modelMapper.map(bookEntity, PatchBookResponseDTO.class);
     }
 }

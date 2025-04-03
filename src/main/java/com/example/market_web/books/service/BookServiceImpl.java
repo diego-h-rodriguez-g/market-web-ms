@@ -1,5 +1,7 @@
 package com.example.market_web.books.service;
 
+import com.example.market_web.books.dto.request.PatchBookRequestDTO;
+import com.example.market_web.books.dto.response.PatchBookResponseDTO;
 import com.example.market_web.books.entity.BookEntity;
 import com.example.market_web.commons.utilities.Utilities;
 import com.example.market_web.books.dto.response.GetAvailableBookResponseDTO;
@@ -50,5 +52,20 @@ public class BookServiceImpl implements BookService {
         }
         bookEntity.setStock(bookEntity.getStock() - quantity);
         return bookRepository.save(bookEntity);
+    }
+
+    @Override
+    public PatchBookResponseDTO patchBook(Integer bookId, PatchBookRequestDTO patchBookRequestDTO) {
+        log.log(Level.INFO, "A new patch update request has been initiated with the following data. bookId: {0} - patchBookRequestDTO: {1}", new Object[]{bookId, patchBookRequestDTO});
+        BookEntity bookEntity = bookRepository.findById(bookId)
+                .orElseThrow(() -> new RuntimeException("The book with bookId '"+ bookId + "' was not found"));
+
+        if (Boolean.FALSE.equals(utilities.objectIsNull(patchBookRequestDTO.getNewPrice()))) {
+            bookEntity.setPrice(patchBookRequestDTO.getNewPrice());
+        }
+        if (Boolean.FALSE.equals(utilities.objectIsNull(patchBookRequestDTO.getAdditionalStock()))) {
+            bookEntity.setStock(bookEntity.getStock() + patchBookRequestDTO.getAdditionalStock());
+        }
+        return bookMapper.entityToDto(bookRepository.save(bookEntity));
     }
 }

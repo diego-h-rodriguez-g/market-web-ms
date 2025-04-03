@@ -11,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Sort;
 
+import java.util.Objects;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.*;
@@ -57,7 +59,7 @@ public class UtilitiesImplTest {
 
         Sort receivedResponse = utilities.buildSort(field, isAsc);
 
-        Assertions.assertEquals(Sort.Direction.ASC, receivedResponse.getOrderFor(field).getDirection());
+        Assertions.assertEquals(Sort.Direction.ASC, Objects.requireNonNull(receivedResponse.getOrderFor(field)).getDirection());
     }
 
     @Test
@@ -68,6 +70,13 @@ public class UtilitiesImplTest {
 
         Sort receivedResponse = utilities.buildSort(field, isAsc);
 
-        Assertions.assertEquals(Sort.Direction.DESC, receivedResponse.getOrderFor(field).getDirection());
+        Assertions.assertEquals(Sort.Direction.DESC, Objects.requireNonNull(receivedResponse.getOrderFor(field)).getDirection());
+    }
+
+    @Test
+    @DisplayName("Should return a Boolean in method isNullObject")
+    public void returnBooleanInIsNullObject() {
+        assertFalse(utilities.objectIsNull(new Object()));
+        assertTrue(utilities.objectIsNull(null));
     }
 }
